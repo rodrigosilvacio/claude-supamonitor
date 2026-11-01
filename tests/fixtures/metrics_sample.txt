@@ -1,0 +1,34 @@
+# HELP pg_up Whether the last scrape of metrics from PostgreSQL was able to connect to the server (1 for yes, 0 for no).
+# TYPE pg_up gauge
+pg_up{supabase_project_ref="abcdefghijklmnopqrst",service_type="db"} 1
+# HELP pg_stat_database_num_backends Number of backends currently connected to this database.
+# TYPE pg_stat_database_num_backends gauge
+pg_stat_database_num_backends{datid="5",datname="postgres",supabase_project_ref="abcdefghijklmnopqrst"} 18
+pg_stat_database_num_backends{datid="1",datname="template1",supabase_project_ref="abcdefghijklmnopqrst"} 0
+pg_stat_database_num_backends{datid="4",datname="_supabase",supabase_project_ref="abcdefghijklmnopqrst"} 3
+# TYPE pg_settings_max_connections gauge
+pg_settings_max_connections{supabase_project_ref="abcdefghijklmnopqrst"} 60
+# TYPE pg_database_size_bytes gauge
+pg_database_size_bytes{datname="postgres",supabase_project_ref="abcdefghijklmnopqrst"} 1.2582912e+08
+# TYPE node_cpu_seconds_total counter
+node_cpu_seconds_total{cpu="0",mode="idle",supabase_project_ref="abcdefghijklmnopqrst"} 1000
+node_cpu_seconds_total{cpu="0",mode="user",supabase_project_ref="abcdefghijklmnopqrst"} 150
+node_cpu_seconds_total{cpu="0",mode="system",supabase_project_ref="abcdefghijklmnopqrst"} 50
+node_cpu_seconds_total{cpu="1",mode="idle",supabase_project_ref="abcdefghijklmnopqrst"} 1100
+node_cpu_seconds_total{cpu="1",mode="user",supabase_project_ref="abcdefghijklmnopqrst"} 100
+# TYPE node_filesystem_size_bytes gauge
+node_filesystem_size_bytes{device="/dev/nvme1n1",fstype="ext4",mountpoint="/data",supabase_project_ref="abcdefghijklmnopqrst"} 8.589934592e+09
+node_filesystem_size_bytes{device="/dev/root",fstype="ext4",mountpoint="/",supabase_project_ref="abcdefghijklmnopqrst"} 1e+10
+# TYPE node_filesystem_avail_bytes gauge
+node_filesystem_avail_bytes{device="/dev/nvme1n1",fstype="ext4",mountpoint="/data",supabase_project_ref="abcdefghijklmnopqrst"} 6.442450944e+09
+node_filesystem_avail_bytes{device="/dev/root",fstype="ext4",mountpoint="/",supabase_project_ref="abcdefghijklmnopqrst"} 5e+09
+# TYPE node_memory_MemTotal_bytes gauge
+node_memory_MemTotal_bytes{supabase_project_ref="abcdefghijklmnopqrst"} 1e+09
+# TYPE node_memory_MemAvailable_bytes gauge
+node_memory_MemAvailable_bytes{supabase_project_ref="abcdefghijklmnopqrst"} 4e+08
+# TYPE supavisor_connections_active gauge
+supavisor_connections_active{tenant="abcdefghijklmnopqrst"} 7
+# Linha com escape e valores especiais
+weird_metric{path="C:\\temp",msg="aspas \"x\"\nfim"} NaN
+inf_metric +Inf
+linha_invalida{sem_fechar="x" 1
