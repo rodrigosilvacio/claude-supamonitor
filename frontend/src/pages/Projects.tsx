@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
+import { Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { bytesToGb, gbToBytes, relativeTime } from "../lib/format";
 import { ENV_LABEL, type ConnectionCheck, type Environment, type Project } from "../lib/types";
@@ -126,7 +127,7 @@ function ProjectRow({ p, check, onEdit, onToggle, onDelete, onTest }: {
     <>
       <tr className="bg-slate-950 hover:bg-slate-900/50">
         <td className="px-4 py-3">
-          <div className="font-medium">{p.name}</div>
+          <Link to={`/projetos/${p.id}`} className="font-medium hover:text-emerald-400">{p.name} →</Link>
           <div className="font-mono text-xs text-slate-500">{p.project_ref}</div>
         </td>
         <td className="px-4 py-3 text-slate-300">{ENV_LABEL[p.environment]}</td>
