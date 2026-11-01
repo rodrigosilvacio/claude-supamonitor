@@ -10,5 +10,5 @@
     "types": ["node"],
     "skipLibCheck": true
   },
-  "include": ["supabase/functions/_shared/core/**/*.ts", "tests/**/*.ts"]
+  "include": ["supabase/functions/_shared/core/**/*.ts", "frontend/src/lib/security.ts", "tests/**/*.ts"]
 }

@@ -6,6 +6,7 @@ import Login from "./pages/Login";
 import Overview from "./pages/Overview";
 import Projects from "./pages/Projects";
 import Placeholder from "./pages/Placeholder";
+import Security from "./pages/Security";
 
 function FullScreen({ children }: { children: React.ReactNode }) {
   return <div className="flex min-h-screen items-center justify-center p-6">{children}</div>;
@@ -43,7 +44,7 @@ export default function App() {
       <Routes>
         <Route element={<Layout email={auth.session.user.email ?? ""} />}>
           <Route index element={<Overview />} />
-          <Route path="seguranca" element={<Placeholder title="Segurança" stage="Etapa 2" description="Achados de segurança e performance de todos os projetos, com severidade, idade do achado e link de remediação." />} />
+          <Route path="seguranca" element={<Security />} />
           <Route path="projetos" element={<Projects />} />
           <Route path="alertas" element={<Placeholder title="Alertas" stage="Etapa 4" description="Regras configuráveis, histórico de eventos e notificações por e-mail e WhatsApp." />} />
           <Route path="configuracoes" element={<Placeholder title="Configurações" stage="Etapa 4" description="Destinos de notificação e intervalos de coleta." />} />

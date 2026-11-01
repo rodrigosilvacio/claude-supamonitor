@@ -24,3 +24,11 @@ export async function requireAdmin(req: Request): Promise<boolean> {
   const { data, error } = await userClient.rpc("is_admin");
   return !error && data === true;
 }
+
+/** Chamada do pg_cron: header x-monitor-cron-secret validado contra o Vault (monitor.verify_cron_secret). */
+export async function isCronRequest(req: Request): Promise<boolean> {
+  const secret = req.headers.get("x-monitor-cron-secret");
+  if (!secret) return false;
+  const { data, error } = await serviceClient().rpc("verify_cron_secret", { p_secret: secret });
+  return !error && data === true;
+}

@@ -4,7 +4,7 @@ const allowedOrigin = Deno.env.get("MONITOR_ALLOWED_ORIGIN") ?? "*";
 
 export const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": allowedOrigin,
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-monitor-cron-secret",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
 
