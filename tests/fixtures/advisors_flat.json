@@ -1,0 +1,24 @@
+{
+  "lints": [
+    {
+      "name": "unindexed_foreign_keys",
+      "title": "Unindexed foreign keys",
+      "level": "INFO",
+      "facing": "EXTERNAL",
+      "categories": ["PERFORMANCE"],
+      "description": "Identifies foreign key constraints without a covering index.",
+      "detail": "Table `public.orders` has a foreign key `orders_user_id_fkey` without a covering index.",
+      "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0001_unindexed_foreign_keys",
+      "metadata": { "name": "orders", "type": "table", "schema": "public", "fkey_name": "orders_user_id_fkey" },
+      "cache_key": "unindexed_foreign_keys_public_orders_orders_user_id_fkey"
+    },
+    {
+      "name": "suspicious",
+      "title": "Link malicioso",
+      "level": "weird",
+      "detail": "x",
+      "remediation": "javascript:alert(1)",
+      "metadata": {}
+    }
+  ]
+}

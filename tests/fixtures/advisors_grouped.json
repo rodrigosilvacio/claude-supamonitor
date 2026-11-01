@@ -1,0 +1,31 @@
+{
+  "result": {
+    "lints": [
+      {
+        "name": "rls_disabled_in_public",
+        "title": "RLS Disabled in Public",
+        "level": "ERROR",
+        "facing": "EXTERNAL",
+        "categories": ["SECURITY"],
+        "description": "Detects cases where row level security (RLS) has not been enabled on tables in schemas exposed to PostgREST",
+        "remediation": "https://supabase.com/docs/guides/database/database-linter?lint=0013_rls_disabled_in_public",
+        "count": 2,
+        "findings": [
+          { "detail": "Table `public.table_a` is public, but RLS has not been enabled.", "metadata": { "name": "table_a", "type": "table", "schema": "public" }, "observed_at": "2026-11-01T01:55:35.917Z" },
+          { "detail": "Table `public.table_b` is public, but RLS has not been enabled.", "metadata": { "name": "table_b", "type": "table", "schema": "public" }, "observed_at": "2026-11-01T01:55:35.917Z" }
+        ]
+      },
+      {
+        "name": "auth_leaked_password_protection",
+        "title": "Leaked Password Protection Disabled",
+        "level": "WARN",
+        "facing": "EXTERNAL",
+        "categories": ["SECURITY"],
+        "description": "Leaked password protection is currently disabled.",
+        "remediation": "https://supabase.com/docs/guides/auth/password-security",
+        "count": 1,
+        "findings": [{ "detail": "Leaked password protection is disabled.", "metadata": { "type": "auth", "entity": "Auth" } }]
+      }
+    ]
+  }
+}
