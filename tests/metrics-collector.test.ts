@@ -14,7 +14,7 @@ function memoryRepo() {
   const repo: MetricsRepo = {
     async previousCpu() {
       const last = [...snapshots].reverse().find((s) => s.raw_subset.cpu);
-      return (last?.raw_subset.cpu as CpuCounters) ?? null;
+      return last ? { cpu: last.raw_subset.cpu as CpuCounters, cpu_pct: last.cpu_pct } : null;
     },
     async insertSnapshot(r) {
       snapshots.push(r);
@@ -54,6 +54,16 @@ describe("scrapeProject", () => {
     await scrapeProject(PROJECT, "sb_secret_x", m.repo, { fetchImpl: vi.fn(async () => new Response(bumped, { status: 200 })) });
     expect(m.snapshots[0].cpu_pct).toBeNull();
     expect(m.snapshots[1].cpu_pct).toBe(70);
+  });
+
+  it("contadores repetidos pela API: repete o último CPU calculado (sem buraco no gráfico)", async () => {
+    const m = memoryRepo();
+    await scrapeProject(PROJECT, "sb_secret_x", m.repo, { fetchImpl: ok() });
+    const bumped = text.replace('cpu="0",mode="idle",supabase_project_ref="abcdefghijklmnopqrst"} 1000', 'cpu="0",mode="idle",supabase_project_ref="abcdefghijklmnopqrst"} 1030').replace('cpu="0",mode="user",supabase_project_ref="abcdefghijklmnopqrst"} 150', 'cpu="0",mode="user",supabase_project_ref="abcdefghijklmnopqrst"} 220');
+    const f2 = vi.fn(async () => new Response(bumped, { status: 200 }));
+    await scrapeProject(PROJECT, "sb_secret_x", m.repo, { fetchImpl: f2 });
+    await scrapeProject(PROJECT, "sb_secret_x", m.repo, { fetchImpl: f2 });
+    expect(m.snapshots.map((s) => s.cpu_pct)).toEqual([null, 70, 70]);
   });
 
   it("Given 3 falhas seguidas, Then contador chega a 3 (base do alerta 'fora do ar')", async () => {
