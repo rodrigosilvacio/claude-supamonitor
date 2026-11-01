@@ -37,3 +37,16 @@
   Todos os 243 achados do ClaudeProjects receberam fingerprint `ck:<cache_key>`.
 - O MCP `get_advisors` devolve o formato agrupado (`findings[]`); o normalizador aceita os dois.
 - Coleta ponta a ponta validada: pg_cron/pg_net → Edge Function → Management API (token escopado Advisors: Read) → `monitor.advisor_findings`.
+
+## ADR-005: Mapeamento real da Metrics API (validado em 01/11/2026, 305 métricas)
+| Indicador | Série real | Observação |
+|---|---|---|
+| Conexões usadas | `pg_stat_database_num_backends` (1 série, label `server`) | |
+| Máx. conexões | `max_connections_connection_count` (exporter Supabase) | `pg_settings_max_connections` **não** é exposto; cadastro como fallback |
+| CPU % | `node_cpu_seconds_total` (16 séries) | o endpoint repete contadores entre scrapes: repete-se o último valor |
+| Memória % | `node_memory_MemTotal_bytes` / `MemAvailable_bytes` | |
+| Disco % | `node_filesystem_size_bytes` / `avail_bytes` | só mountpoint `/` neste projeto (fallback já previsto) |
+| Tamanho do banco | `pg_database_size_bytes` (soma por `datname`) | |
+| Lag de replicação | `physical_replication_lag_physical_replication_lag_seconds` | exposto mesmo sem réplica (valor 0) |
+| Pooler | `pgbouncer_pools_client_active_connections` | `supavisor_*` não exposto |
+Contrato: `tests/metrics-contract.test.ts` + `tests/fixtures/metrics_catalog_real.json`.

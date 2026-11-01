@@ -23,13 +23,14 @@ Deno.serve(async (req) => {
     async previousCpu(projectId) {
       const { data } = await db
         .from("metric_snapshots")
-        .select("raw_subset")
+        .select("raw_subset, cpu_pct")
         .eq("project_id", projectId)
         .eq("scrape_ok", true)
         .order("collected_at", { ascending: false })
         .limit(1)
         .maybeSingle();
-      return (data?.raw_subset?.cpu as CpuCounters | undefined) ?? null;
+      if (!data) return null;
+      return { cpu: (data.raw_subset?.cpu as CpuCounters | undefined) ?? null, cpu_pct: data.cpu_pct == null ? null : Number(data.cpu_pct) };
     },
     async insertSnapshot(row) {
       const { error } = await db.from("metric_snapshots").insert(row);

@@ -8,7 +8,7 @@ const parsed = parsePrometheus(text);
 describe("extractSnapshot", () => {
   const s = extractSnapshot(parsed, { prevCpu: { idle: 2000, total: 2300 } });
 
-  it("conexões: soma de todos os bancos sobre max_connections da métrica", () => {
+  it("conexões: backends sobre max_connections_connection_count (exporter Supabase)", () => {
     expect(s.connections_used).toBe(21);
     expect(s.connections_max).toBe(60);
     expect(s.connections_used_pct).toBe(35);
@@ -33,15 +33,20 @@ describe("extractSnapshot", () => {
   });
 
   it("sem max_connections na métrica usa o fallback do cadastro", () => {
-    const noMax = parsePrometheus(text.replace(/^pg_settings_max_connections.*$/m, ""));
+    const noMax = parsePrometheus(text.replace(/^max_connections_connection_count.*$/m, ""));
     const r = extractSnapshot(noMax, { maxConnectionsFallback: 42 });
     expect(r.connections_max).toBe(42);
     expect(r.connections_used_pct).toBe(50);
   });
 
   it("sem denominador nenhum, % fica null (nunca inventa)", () => {
-    const noMax = parsePrometheus(text.replace(/^pg_settings_max_connections.*$/m, ""));
+    const noMax = parsePrometheus(text.replace(/^max_connections_connection_count.*$/m, ""));
     expect(extractSnapshot(noMax).connections_used_pct).toBeNull();
+  });
+
+  it("pg_settings_max_connections como segunda opção", () => {
+    const alt = parsePrometheus(text.replace(/^max_connections_connection_count.*$/m, "pg_settings_max_connections 100"));
+    expect(extractSnapshot(alt).connections_max).toBe(100);
   });
 
   it("pg_database_size_mb como alternativa", () => {

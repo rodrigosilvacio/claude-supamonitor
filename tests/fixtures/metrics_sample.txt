@@ -6,8 +6,8 @@ pg_up{supabase_project_ref="abcdefghijklmnopqrst",service_type="db"} 1
 pg_stat_database_num_backends{datid="5",datname="postgres",supabase_project_ref="abcdefghijklmnopqrst"} 18
 pg_stat_database_num_backends{datid="1",datname="template1",supabase_project_ref="abcdefghijklmnopqrst"} 0
 pg_stat_database_num_backends{datid="4",datname="_supabase",supabase_project_ref="abcdefghijklmnopqrst"} 3
-# TYPE pg_settings_max_connections gauge
-pg_settings_max_connections{supabase_project_ref="abcdefghijklmnopqrst"} 60
+# TYPE max_connections_connection_count gauge
+max_connections_connection_count{server="localhost:5432",service_type="db",supabase_project_ref="abcdefghijklmnopqrst"} 60
 # TYPE pg_database_size_bytes gauge
 pg_database_size_bytes{datname="postgres",supabase_project_ref="abcdefghijklmnopqrst"} 1.2582912e+08
 # TYPE node_cpu_seconds_total counter

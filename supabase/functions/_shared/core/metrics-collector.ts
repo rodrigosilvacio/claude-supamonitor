@@ -25,7 +25,8 @@ export interface SnapshotRow {
 }
 
 export interface MetricsRepo {
-  previousCpu(projectId: string): Promise<CpuCounters | null>;
+  /** Último snapshot bem-sucedido: contadores de CPU e o cpu_pct calculado nele. */
+  previousCpu(projectId: string): Promise<{ cpu: CpuCounters | null; cpu_pct: number | null } | null>;
   insertSnapshot(row: SnapshotRow): Promise<void>;
   /** ok=true zera consecutive_failures; ok=false incrementa. Atualiza last_scrape_at. Devolve o novo contador. */
   markScrape(projectId: string, ok: boolean, at: string): Promise<number>;
@@ -82,8 +83,8 @@ export async function scrapeProject(
     const parsed = parsePrometheus(res.body);
     if (parsed.samples.length === 0) return fail("resposta sem métricas (formato pode ter mudado)", res.status, res.durationMs);
 
-    const prevCpu = await repo.previousCpu(project.id);
-    const snap = extractSnapshot(parsed, { prevCpu, maxConnectionsFallback: project.max_connections });
+    const prev = await repo.previousCpu(project.id);
+    const snap = extractSnapshot(parsed, { prevCpu: prev?.cpu ?? null, prevCpuPct: prev?.cpu_pct ?? null, maxConnectionsFallback: project.max_connections });
     const dbDown = snap.pg_up === false;
     const message = dbDown ? "banco fora do ar (pg_up = 0)" : snap.missing_required.length ? `métricas ausentes: ${snap.missing_required.join(", ")}` : "ok";
 

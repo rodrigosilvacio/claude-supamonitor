@@ -19,11 +19,13 @@ export const REQUIRED_METRICS = [
 /** Usadas se existirem (há alternativas ou dependem do plano/configuração). */
 export const OPTIONAL_METRICS = [
   "pg_up",
+  "max_connections_connection_count", // exporter Supabase (validado na saída real em 01/11/2026)
   "pg_settings_max_connections",
   "pg_database_size_bytes",
   "pg_database_size_mb",
   "physical_replication_lag_physical_replication_lag_seconds",
-  "supavisor_connections_active",
+  "pgbouncer_pools_client_active_connections", // pooler do projeto validado (pgbouncer)
+  "supavisor_connections_active", // fallback, se o projeto usar Supavisor exposto no endpoint
 ] as const;
 
 export interface CpuCounters {
@@ -88,7 +90,7 @@ export function cpuPctBetween(prev: CpuCounters | null, cur: CpuCounters | null)
 
 export function extractSnapshot(
   parsed: ParsedMetrics,
-  opts: { prevCpu?: CpuCounters | null; maxConnectionsFallback?: number | null } = {},
+  opts: { prevCpu?: CpuCounters | null; prevCpuPct?: number | null; maxConnectionsFallback?: number | null } = {},
 ): MetricSnapshot {
   const s = parsed.samples;
   const present = new Set(s.map((x) => x.name));
@@ -96,7 +98,8 @@ export function extractSnapshot(
 
   const pgUp = max(byName(s, "pg_up"));
   const used = sum(byName(s, "pg_stat_database_num_backends"));
-  const maxFromMetric = max(byName(s, "pg_settings_max_connections"));
+  // Denominador: exporter Supabase > pg_settings (não exposto hoje) > cadastro do projeto.
+  const maxFromMetric = max(byName(s, "max_connections_connection_count")) ?? max(byName(s, "pg_settings_max_connections"));
   const connMax = maxFromMetric && maxFromMetric > 0 ? maxFromMetric : opts.maxConnectionsFallback ?? null;
 
   const sizeBytes = sum(byName(s, "pg_database_size_bytes"));
@@ -113,12 +116,13 @@ export function extractSnapshot(
     connections_used: used,
     connections_max: connMax,
     connections_used_pct: used != null && connMax ? round((100 * used) / connMax) : null,
-    cpu_pct: cpuPctBetween(opts.prevCpu ?? null, counters),
+    // A Metrics API atualiza a cada ~1 min e pode repetir os mesmos contadores: nesse caso, repete o último valor.
+    cpu_pct: opts.prevCpu && counters && counters.total === opts.prevCpu.total ? opts.prevCpuPct ?? null : cpuPctBetween(opts.prevCpu ?? null, counters),
     mem_used_pct: memTotal && memAvail != null ? round(100 * (1 - memAvail / memTotal)) : null,
     db_size_bytes,
     disk_used_pct: diskUsedPct(s),
     replication_lag_s: max(byName(s, "physical_replication_lag_physical_replication_lag_seconds")),
-    pooler_connections: sum(byName(s, "supavisor_connections_active")),
+    pooler_connections: sum(byName(s, "pgbouncer_pools_client_active_connections")) ?? sum(byName(s, "supavisor_connections_active")),
     cpu_counters: counters,
     missing_required: [...missing_required],
   };
