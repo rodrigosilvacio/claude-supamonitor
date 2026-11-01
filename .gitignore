@@ -1,0 +1,23 @@
+# Segredos (nunca versionar)
+.env
+.env.*
+!.env.example
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+# Dependências e builds
+node_modules/
+dist/
+coverage/
+.vite/
+
+# Supabase CLI local
+supabase/.temp/
+supabase/.branches/
+
+# Sistema / editor
+.DS_Store
+*.log
+.idea/
+.vscode/
