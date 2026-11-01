@@ -31,3 +31,9 @@
 | Disco % | `node_filesystem_size_bytes` / `node_filesystem_avail_bytes` (`/data`) |
 | Lag de replicação | `physical_replication_lag_physical_replication_lag_seconds` (só com réplica) |
 | Pooler | `supavisor_connections_active` |
+
+## ADR-004: Formato real da resposta de advisors (validado em 01/11/2026)
+- A REST API (`/v1/projects/{ref}/advisors/*`) devolve **um item por achado, com `cache_key`** (formato "plano").
+  Todos os 243 achados do ClaudeProjects receberam fingerprint `ck:<cache_key>`.
+- O MCP `get_advisors` devolve o formato agrupado (`findings[]`); o normalizador aceita os dois.
+- Coleta ponta a ponta validada: pg_cron/pg_net → Edge Function → Management API (token escopado Advisors: Read) → `monitor.advisor_findings`.
